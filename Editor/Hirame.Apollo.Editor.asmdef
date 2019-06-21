@@ -1,0 +1,17 @@
+{
+    "name": "Hirame.Apollo.Editor",
+    "references": [
+        "GUID:fe35fc9f749443e45856a6c76aef098a"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}
