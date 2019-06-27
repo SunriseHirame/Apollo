@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Hiramesaurus.Apollo
+namespace Hirame.Apollo
 {
     public class MusicPlayerAccess : MonoBehaviour
     {

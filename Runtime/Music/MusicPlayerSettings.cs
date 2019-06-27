@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Hiramesaurus
+namespace Hirame
 {
     public class MusicPlayerSettings : ScriptableObject
     {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Hiramesaurus.Apollo
+namespace Hirame.Apollo
 {
     public sealed class GlobalMusicPlayer : MusicPlayerBase
     {      

@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Hiramesaurus.Apollo.Editor
+namespace Hirame.Apollo.Editor
 {
     [CustomPropertyDrawer (typeof (AudioEventClip))]
     public class AudioEventClipDrawer : PropertyDrawer

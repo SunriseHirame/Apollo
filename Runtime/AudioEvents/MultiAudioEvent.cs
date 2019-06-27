@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Hiramesaurus.Apollo
+namespace Hirame.Apollo
 {
     
     [CreateAssetMenu (menuName = "Hiramesaurus/Apollo/Multi Audio Event")]
@@ -11,7 +11,7 @@ namespace Hiramesaurus.Apollo
         internal override AudioEventData GetEventClip ()
         {
             var eventClip = EventClips[Random.Range (0, EventClips.Length)];
-            return new AudioEventData (eventClip.Clip, eventClip.VolumeRange.GetRandom (), eventClip.PitchRange.GetRandom ());
+            return new AudioEventData (eventClip.Clip, eventClip.VolumeMinMax.GetRandom (), eventClip.PitchMinMax.GetRandom ());
         }
 
         private void Reset ()

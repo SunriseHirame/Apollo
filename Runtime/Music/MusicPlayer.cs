@@ -1,4 +1,4 @@
-﻿namespace Hiramesaurus.Apollo
+﻿namespace Hirame.Apollo
 {
     public class MusicPlayer : MusicPlayerBase
     {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Hiramesaurus.Apollo
+namespace Hirame.Apollo
 {
     [CreateAssetMenu (menuName = "Hiramesaurus/Apollo/Layered Music")]
     public class LayeredMusic : DynamicMusic

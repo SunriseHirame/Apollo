@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Hiramesaurus.Apollo.Editor
+namespace Hirame.Apollo.Editor
 {
     [CustomEditor (typeof (AudioEvent), true)]
     public class AudioEventEditor : UnityEditor.Editor

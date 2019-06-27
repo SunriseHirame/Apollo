@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using Hiramesaurus.Pantheon;
+using Hirame.Pantheon;
 
-namespace Hiramesaurus.Apollo
+namespace Hirame.Apollo
 {
     [CreateAssetMenu (menuName = "Hiramesaurus/Apollo/Simple Audio Event")]
     public sealed class SimpleAudioEvent : AudioEvent
@@ -10,7 +10,7 @@ namespace Hiramesaurus.Apollo
        
         internal override AudioEventData GetEventClip ()
         {
-            return new AudioEventData (EventClip.Clip, EventClip.VolumeRange.GetRandom (), EventClip.PitchRange.GetRandom ());
+            return new AudioEventData (EventClip.Clip, EventClip.VolumeMinMax.GetRandom (), EventClip.PitchMinMax.GetRandom ());
         }
     }
 
