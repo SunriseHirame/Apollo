@@ -56,6 +56,7 @@ namespace Hirame.Apollo
             {
                 musicSource2.clip = intro;
                 musicSource2.loop = false;
+                musicSource2.outputAudioMixerGroup = music.AudioMixer;
                 musicSource2.Play ();
             }
             
@@ -63,6 +64,7 @@ namespace Hirame.Apollo
             if (loop)
             {
                 musicSource.clip = loop;
+                musicSource.outputAudioMixerGroup = music.AudioMixer;
                 musicSource.PlayDelayed (intro ? intro.length : 0f);
             }
         }
