@@ -2,7 +2,7 @@
 
 namespace Hirame.Apollo
 {
-    [CreateAssetMenu (menuName = "Hiramesaurus/Apollo/Playlist")]
+    [CreateAssetMenu (menuName = "Hirame/Apollo/Playlist")]
     public class Playlist : DynamicMusic
     {
         [SerializeField]

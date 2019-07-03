@@ -2,7 +2,7 @@
 
 namespace Hirame.Apollo
 {
-    [CreateAssetMenu (menuName = "Hiramesaurus/Apollo/Layered Music")]
+    [CreateAssetMenu (menuName = "Hirame/Apollo/Layered Music")]
     public class LayeredMusic : DynamicMusic
     {
         public AudioClip Intro;

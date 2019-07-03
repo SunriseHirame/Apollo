@@ -3,7 +3,7 @@
 namespace Hirame.Apollo
 {
     
-    [CreateAssetMenu (menuName = "Hiramesaurus/Apollo/Multi Audio Event")]
+    [CreateAssetMenu (menuName = "Hirame/Apollo/Multi Audio Event")]
     public class MultiAudioEvent : AudioEvent
     {
         public AudioEventClip[] EventClips;
