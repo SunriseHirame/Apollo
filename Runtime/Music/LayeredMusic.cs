@@ -6,8 +6,13 @@ namespace Hirame.Apollo
     public class LayeredMusic : DynamicMusic
     {
         public AudioClip Intro;
-        public AudioClip Outro;
+        //public AudioClip Outro;
         public AudioClip Loop;
+        
+        public override AudioClip GetIntro ()
+        {
+            return Intro;
+        }
         
         public override AudioClip GetLoop ()
         {
