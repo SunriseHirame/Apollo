@@ -7,6 +7,7 @@ namespace Hirame.Apollo
         public static GlobalMusicPlayer Instance { get; private set; }
 
         private AudioSource musicSource;
+        private AudioSource musicSource2;
         
         private static void RegisterGlobalPlayer (GlobalMusicPlayer player)
         {
@@ -49,20 +50,42 @@ namespace Hirame.Apollo
                 musicSource.Stop ();
 
             CurrentMusic = music;
-            musicSource.clip = music.GetLoop ();
-            musicSource.Play ();
+
+            var intro = music.GetIntro ();
+            if (intro)
+            {
+                musicSource2.clip = intro;
+                musicSource2.loop = false;
+                musicSource2.Play ();
+            }
+            
+            var loop = music.GetLoop ();
+            if (loop)
+            {
+                musicSource.clip = loop;
+                musicSource.PlayDelayed (intro ? intro.length : 0f);
+            }
         }
 
         [RuntimeInitializeOnLoadMethod (RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize ()
         {
             var player = new GameObject("Global Music Player").AddComponent<GlobalMusicPlayer> ();
-            player.musicSource = player.gameObject.AddComponent<AudioSource> ();
-            player.musicSource.loop = true;
             player.hideFlags = HideFlags.DontSave;
+
             DontDestroyOnLoad (player.gameObject);
-            
             RegisterGlobalPlayer (player);
+
+            
+            player.musicSource = CreateMusicSource (player.gameObject);
+            player.musicSource2 = CreateMusicSource (player.gameObject);
+        }
+
+        private static AudioSource CreateMusicSource (GameObject go)
+        {
+            var source = go.AddComponent<AudioSource> ();
+            source.loop = true;
+            return source;
         }
     }
 }

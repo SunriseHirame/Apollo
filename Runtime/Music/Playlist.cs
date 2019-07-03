@@ -8,6 +8,11 @@ namespace Hirame.Apollo
         [SerializeField]
         private LayeredMusic[] tracks;
 
+        public override AudioClip GetIntro ()
+        {
+            return tracks[0].GetIntro ();
+        }
+        
         public override AudioClip GetLoop ()
         {
             return tracks[0].GetLoop ();
