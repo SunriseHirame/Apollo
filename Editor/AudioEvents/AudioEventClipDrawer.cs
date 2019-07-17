@@ -14,8 +14,8 @@ namespace Hirame.Apollo.Editor
         {
             // Get properties
             var clipProp = property.FindPropertyRelative ("clip");
-            var volumeProp = property.FindPropertyRelative ("volumeMinMax");
-            var pitchProp = property.FindPropertyRelative ("pitchMinMax");
+            var volumeProp = property.FindPropertyRelative ("volume");
+            var pitchProp = property.FindPropertyRelative ("pitch");
 
             // Find the name of the Attached AudioClip
             var clipName = GetHeaderName (clipProp, label);
