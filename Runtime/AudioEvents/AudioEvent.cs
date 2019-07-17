@@ -76,6 +76,8 @@ namespace Hirame.Apollo
                 eventSource = Instantiate (
                     audioSourcePool.Proto, playRequest.Position,
                     Quaternion.identity, playRequest.AttachTo);
+                
+                DontDestroyOnLoad (eventSource.gameObject);
             }
 
             ApplyEventClip (eventSource, time - lastTimePlayed);
