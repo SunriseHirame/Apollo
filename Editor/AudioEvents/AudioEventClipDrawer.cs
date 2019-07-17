@@ -56,7 +56,7 @@ namespace Hirame.Apollo.Editor
             if (prop.objectReferenceInstanceIDValue != cachedClipInstanceId)
             {
                 cachedClipInstanceId = prop.objectReferenceInstanceIDValue;
-                cachedClipName = $"{label.text}: {prop.objectReferenceValue.name}";
+                cachedClipName = $"{label.text}: {(prop.objectReferenceValue != false ? prop.objectReferenceValue.name : "(None)")}";
             }
             
             return prop.objectReferenceValue ? cachedClipName : label.text;
