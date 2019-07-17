@@ -1,46 +1,107 @@
-﻿using System.Collections.Generic;
+﻿using System.Runtime.CompilerServices;
+using Hirame.Pantheon;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Hirame.Apollo
 {
     public abstract class AudioEvent : ScriptableObject
     {
-        internal readonly List<PlayRequest> playQueue = new List<PlayRequest> ();
+        private const int MaxEventsPerFrame = 4;
         
         [SerializeField] private AudioSource audioSourceProto;
+        
+        internal int QueuedItems;
 
+        private readonly PlayRequest[] playQueue = new PlayRequest[MaxEventsPerFrame];
+        private GameObjectPool<AudioSource> audioSourcePool;
+
+        private float lastTimePlayed;
+        
         public AudioSource AudioSourceProto => audioSourceProto;
 
+        
         public void PlayAt (Vector3 position)
         {
-            playQueue.Add (new PlayRequest (position));
+            if (QueuedItems >= MaxEventsPerFrame)
+                return;
+            
+            playQueue[QueuedItems] = new PlayRequest (position);
+            QueuedItems++;
         }
 
         public void PlayAt (Transform transform)
         {
-            Debug.Log ("PLAY AT");
-            playQueue.Add (new PlayRequest (transform.position));
+            if (QueuedItems >= MaxEventsPerFrame)
+                return;
+
+            playQueue[QueuedItems] = new PlayRequest (transform.position);
+            QueuedItems++;
         }
 
         public void PlayAttachedTo (Transform transform)
         {
-            playQueue.Add (new PlayRequest (transform.position, transform));
-        }
-
-        public void OverrideWithEventClip (AudioSource audioSource)
-        {
-            var eventClip = GetEventClip ();
-            audioSource.clip = eventClip.Clip;
-            audioSource.volume = eventClip.Volume;
-            audioSource.pitch = eventClip.Pitch;
+            if (QueuedItems >= MaxEventsPerFrame)
+                return;
+            
+            playQueue[QueuedItems] = new PlayRequest (transform.position, transform);
+            QueuedItems++;
         }
         
-        internal abstract AudioEventData GetEventClip ();
+
+        public void ResolvePlayRequest (int index, float time)
+        {
+            var playRequest = playQueue[index];
+            
+            if (!audioSourcePool.TryGetItem (out var eventSource))
+            {
+                eventSource = Instantiate (
+                    audioSourcePool.Proto, playRequest.Position,
+                    Quaternion.identity, playRequest.AttachTo);
+            }
+
+            ApplyEventClip (eventSource, time);
+            eventSource.gameObject.SetActive (true);
+            eventSource.Play ();
+
+            new Ananke.DelayedAction (eventSource.clip.length, () => audioSourcePool.AddItem (eventSource));
+        }
+        
+        public void ResolvePlayRequest (int index, float time, out AudioSource eventSource)
+        {
+            var playRequest = playQueue[index];
+            
+            if (!audioSourcePool.TryGetItem (out eventSource))
+            {
+                eventSource = Instantiate (
+                    audioSourcePool.Proto, playRequest.Position,
+                    Quaternion.identity, playRequest.AttachTo);
+            }
+
+            ApplyEventClip (eventSource, time);
+            eventSource.Play ();
+        }
+        
+        [MethodImpl (MethodImplOptions.AggressiveInlining)]
+        private void ApplyEventClip (AudioSource audioSource, float time)
+        {
+            var attack = math.clamp (time - lastTimePlayed, 0.1f, 1);
+            
+            var eventClip = GetEventClip ();
+            audioSource.clip = eventClip.Clip;
+            audioSource.volume = eventClip.Volume.GetRandom () * attack;
+            audioSource.pitch = eventClip.Pitch.GetRandom ();
+        }
+        
+        internal abstract ref readonly AudioEventClip GetEventClip ();
 
         
 
         private void OnEnable ()
         {
+            audioSourcePool = new GameObjectPool<AudioSource> (audioSourceProto, 10, true);
+            audioSourcePool.FillWithItems ();
+            
             AudioEventPlayer.AddAudioEvent (this);
         }
 

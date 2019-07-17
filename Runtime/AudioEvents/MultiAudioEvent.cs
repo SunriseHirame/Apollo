@@ -8,10 +8,9 @@ namespace Hirame.Apollo
     {
         public AudioEventClip[] EventClips;
         
-        internal override AudioEventData GetEventClip ()
+        internal override ref readonly AudioEventClip GetEventClip ()
         {
-            var eventClip = EventClips[Random.Range (0, EventClips.Length)];
-            return new AudioEventData (eventClip.Clip, eventClip.VolumeMinMax.GetRandom (), eventClip.PitchMinMax.GetRandom ());
+            return ref EventClips[Random.Range (0, EventClips.Length)];
         }
 
         private void Reset ()

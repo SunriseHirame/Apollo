@@ -1,11 +1,15 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Hirame.Apollo.Editor
 {
     [CustomPropertyDrawer (typeof (AudioEventClip))]
     public class AudioEventClipDrawer : PropertyDrawer
     {
+        private int cachedClipInstanceId;
+        private string cachedClipName;
+        
         public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
         {
             // Get properties
@@ -14,7 +18,7 @@ namespace Hirame.Apollo.Editor
             var pitchProp = property.FindPropertyRelative ("pitchMinMax");
 
             // Find the name of the Attached AudioClip
-            var clipName = clipProp.objectReferenceValue ? clipProp.objectReferenceValue.name : "None (Audio Clip)";
+            var clipName = GetHeaderName (clipProp, label);
 
             // See if we are part of an array and find index.
             var propPath = property.propertyPath;
@@ -34,7 +38,7 @@ namespace Hirame.Apollo.Editor
             position.height = EditorGUIUtility.singleLineHeight;         
             GUI.Box (position, GUIContent.none);
 
-            EditorGUI.LabelField (position, string.IsNullOrEmpty (clipName) ? label.text : clipName);
+            EditorGUI.LabelField (position, clipName);
             position.y += EditorGUIUtility.singleLineHeight;
             
 
@@ -47,6 +51,17 @@ namespace Hirame.Apollo.Editor
             EditorGUI.PropertyField (position, pitchProp);
         }
 
+        private string GetHeaderName (SerializedProperty prop, GUIContent label)
+        {
+            if (prop.objectReferenceInstanceIDValue != cachedClipInstanceId)
+            {
+                cachedClipInstanceId = prop.objectReferenceInstanceIDValue;
+                cachedClipName = $"{label.text}: {prop.objectReferenceValue.name}";
+            }
+            
+            return prop.objectReferenceValue ? cachedClipName : label.text;
+        }
+        
         public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
         {
             return 4 * EditorGUIUtility.singleLineHeight + 1;

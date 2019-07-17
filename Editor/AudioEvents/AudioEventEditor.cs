@@ -48,9 +48,10 @@ namespace Hirame.Apollo.Editor
             PreviewSource.Stop ();
 
             var eventClip = audioEvent.GetEventClip ();
+            
             PreviewSource.clip = eventClip.Clip;
-            PreviewSource.volume = eventClip.Volume;
-            PreviewSource.pitch = eventClip.Pitch;
+            PreviewSource.volume = eventClip.Volume.GetRandom ();
+            PreviewSource.pitch = eventClip.Pitch.GetRandom ();
             
             PreviewSource.Play ();
         }

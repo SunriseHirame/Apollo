@@ -1,33 +1,33 @@
 ﻿using System.Collections.Generic;
+using Hirame.Pantheon;
 using Hirame.Pantheon.Core;
 using UnityEngine;
 
 namespace Hirame.Apollo
 {
+    [AutoGameSystem (typeof (AudioEventPlayer))]
     public sealed class AudioEventPlayer : GameSystem<AudioEventPlayer>
     {
         private static readonly List<AudioEvent> audioEvents = new List<AudioEvent>();
 
-        private void Update ()
+        private void LateUpdate ()
         {
+            var time = Time.time;
+
             foreach (var audioEvent in audioEvents)
             {
-                PlayerQueuedEvents (audioEvent);
+                PlayerQueuedEvents (audioEvent, time);
             }
         }
 
-        private static void PlayerQueuedEvents (AudioEvent audioEvent)
+        private static void PlayerQueuedEvents (AudioEvent audioEvent, float time)
         {
-            foreach (var request in audioEvent.playQueue)
+            for (var i = 0; i < audioEvent.QueuedItems; i++)
             {
-                var source = Instantiate (
-                    audioEvent.AudioSourceProto, request.Position,
-                    Quaternion.identity, request.AttachTo);
-                
-                audioEvent.OverrideWithEventClip (source);
-                
-                print ("Resolved request");
+                audioEvent.ResolvePlayRequest (i, time);
             }
+
+            audioEvent.QueuedItems = 0;
         }
 
         internal static void AddAudioEvent (AudioEvent audioEvent)

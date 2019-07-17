@@ -1,8 +1,9 @@
 {
-    "name": "Hirame.Apollo",
+    "name": "Hirame.Apollo.Runtime",
     "references": [
         "GUID:83b2b053c31a10140a0bf3ba6ffd6622",
-        "GUID:d8b63aba1907145bea998dd612889d6b"
+        "GUID:d8b63aba1907145bea998dd612889d6b",
+        "GUID:c7d3386d77d3a474b92c3244ddae02e6"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
