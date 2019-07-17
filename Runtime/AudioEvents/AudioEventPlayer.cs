@@ -16,7 +16,8 @@ namespace Hirame.Apollo
 
             foreach (var audioEvent in audioEvents)
             {
-                PlayerQueuedEvents (audioEvent, time);
+                if (audioEvent.QueuedItems > 0)
+                    PlayerQueuedEvents (audioEvent, time);
             }
         }
 
@@ -27,6 +28,7 @@ namespace Hirame.Apollo
                 audioEvent.ResolvePlayRequest (i, time);
             }
 
+            audioEvent.lastTimePlayed = time;
             audioEvent.QueuedItems = 0;
         }
 

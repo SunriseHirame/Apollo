@@ -16,7 +16,7 @@ namespace Hirame.Apollo
         private readonly PlayRequest[] playQueue = new PlayRequest[MaxEventsPerFrame];
         private GameObjectPool<AudioSource> audioSourcePool;
 
-        protected float lastTimePlayed;
+        internal float lastTimePlayed;
         
         public AudioSource AudioSourceProto => audioSourceProto;
 
