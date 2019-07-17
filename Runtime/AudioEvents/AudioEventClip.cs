@@ -25,8 +25,8 @@ namespace Hirame.Apollo
         public AudioEventClip (AudioClip clip, FloatMinMax volumeMinMax, FloatMinMax pitchMinMax)
         {
             this.clip = clip;
-            this.volume = FloatMinMax.Clamped (volumeMinMax, 0, 1);
-            this.pitch = FloatMinMax.Clamped (pitchMinMax, -3, 4);
+            volume = FloatMinMax.Clamped (volumeMinMax, 0, 1);
+            pitch = FloatMinMax.Clamped (pitchMinMax, -3, 4);
         }
     }
 }

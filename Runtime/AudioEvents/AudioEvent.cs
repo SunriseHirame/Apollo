@@ -16,7 +16,7 @@ namespace Hirame.Apollo
         private readonly PlayRequest[] playQueue = new PlayRequest[MaxEventsPerFrame];
         private GameObjectPool<AudioSource> audioSourcePool;
 
-        private float lastTimePlayed;
+        protected float lastTimePlayed;
         
         public AudioSource AudioSourceProto => audioSourceProto;
 
@@ -78,24 +78,13 @@ namespace Hirame.Apollo
                     Quaternion.identity, playRequest.AttachTo);
             }
 
-            ApplyEventClip (eventSource, time);
+            ApplyEventClip (eventSource, time - lastTimePlayed);
             eventSource.Play ();
         }
-        
-        [MethodImpl (MethodImplOptions.AggressiveInlining)]
-        private void ApplyEventClip (AudioSource audioSource, float time)
-        {
-            var attack = math.clamp (time - lastTimePlayed, 0.1f, 1);
-            
-            var eventClip = GetEventClip ();
-            audioSource.clip = eventClip.Clip;
-            audioSource.volume = eventClip.Volume.GetRandom () * attack;
-            audioSource.pitch = eventClip.Pitch.GetRandom ();
-        }
-        
-        internal abstract ref readonly AudioEventClip GetEventClip ();
 
-        
+        public abstract void ApplyEventClip (AudioSource audioSource, float timeSinceLastEvent);
+
+        public abstract ref readonly AudioEventClip GetEventClip ();
 
         private void OnEnable ()
         {

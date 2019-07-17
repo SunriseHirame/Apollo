@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Unity.Mathematics;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Hirame.Apollo
 {
@@ -8,14 +10,25 @@ namespace Hirame.Apollo
     {
         public AudioEventClip[] EventClips;
         
-        internal override ref readonly AudioEventClip GetEventClip ()
+        public override void ApplyEventClip (AudioSource audioSource, float timeSinceLastEvent)
+        {
+            var attack = math.clamp (timeSinceLastEvent, 0.1f, 1);
+
+            var eventClip = EventClips[Random.Range (0, EventClips.Length)];
+            
+            audioSource.clip = eventClip.Clip;
+            audioSource.volume = eventClip.Volume.GetRandom () * attack;
+            audioSource.pitch = eventClip.Pitch.GetRandom ();
+        }
+
+        public override ref readonly AudioEventClip GetEventClip ()
         {
             return ref EventClips[Random.Range (0, EventClips.Length)];
         }
 
         private void Reset ()
         {
-            EventClips = new[] {AudioEventClip.Default};
+            EventClips = new[] { AudioEventClip.Default };
         }
     }
 

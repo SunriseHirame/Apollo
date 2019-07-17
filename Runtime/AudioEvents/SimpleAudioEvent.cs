@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Hirame.Pantheon;
+using Unity.Mathematics;
 
 namespace Hirame.Apollo
 {
@@ -7,11 +8,21 @@ namespace Hirame.Apollo
     public sealed class SimpleAudioEvent : AudioEvent
     {
         public AudioEventClip EventClip = AudioEventClip.Default;
-       
-        internal override ref readonly AudioEventClip GetEventClip ()
+
+        public override void ApplyEventClip (AudioSource audioSource, float timeSinceLastEvent)
+        {
+            var attack = math.clamp (timeSinceLastEvent, 0.1f, 1);
+            
+            audioSource.clip = EventClip.Clip;
+            audioSource.volume = EventClip.Volume.GetRandom () * attack;
+            audioSource.pitch = EventClip.Pitch.GetRandom ();
+        }
+        
+        public override ref readonly AudioEventClip GetEventClip ()
         {
             return ref EventClip;
         }
+
     }
 
 }
