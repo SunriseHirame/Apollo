@@ -34,6 +34,7 @@ namespace Hirame.Apollo
 
         internal static void AddAudioEvent (AudioEvent audioEvent)
         {
+            audioEvent.lastTimePlayed = Time.time;
             audioEvents.Add (audioEvent);   
         }
 

@@ -60,7 +60,7 @@ namespace Hirame.Apollo
                     Quaternion.identity, playRequest.AttachTo);
             }
 
-            ApplyEventClip (eventSource, time);
+            ApplyEventClip (eventSource, time - lastTimePlayed);
             eventSource.gameObject.SetActive (true);
             eventSource.Play ();
 
