@@ -16,8 +16,6 @@ namespace Hirame.Apollo
             audioSource.clip = EventClip.Clip;
             audioSource.volume = EventClip.Volume.GetRandom () * attack;
             audioSource.pitch = EventClip.Pitch.GetRandom ();
-            
-            Debug.Log ($"{timeSinceLastEvent} | {lastTimePlayed}");
         }
         
         public override ref readonly AudioEventClip GetEventClip ()
