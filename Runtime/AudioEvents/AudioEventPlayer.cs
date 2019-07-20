@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace Hirame.Apollo
 {
-    [AutoGameSystem (typeof (AudioEventPlayer))]
     public sealed class AudioEventPlayer : GameSystem<AudioEventPlayer>
     {
         private static readonly List<AudioEvent> audioEvents = new List<AudioEvent>();
