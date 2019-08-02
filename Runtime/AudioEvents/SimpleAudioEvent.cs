@@ -11,7 +11,7 @@ namespace Hirame.Apollo
 
         public override void ApplyEventClip (AudioSource audioSource, float timeSinceLastEvent)
         {
-            var attack = math.clamp (timeSinceLastEvent, 0.1f, 1);
+            var attack = math.clamp (timeSinceLastEvent, 1f / QueuedItems, 1f);
             
             audioSource.clip = EventClip.Clip;
             audioSource.volume = EventClip.Volume.GetRandom () * attack;

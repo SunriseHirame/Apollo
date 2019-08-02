@@ -87,7 +87,9 @@ namespace Hirame.Apollo
         private void OnEnable ()
         {
             audioSourcePool = new GameObjectPool<AudioSource> (audioSourceProto, 10, true);
-            audioSourcePool.FillWithItems ();
+            
+            if (Application.isPlaying)
+                audioSourcePool.FillWithItems ();
             
             AudioEventPlayer.AddAudioEvent (this);
         }
