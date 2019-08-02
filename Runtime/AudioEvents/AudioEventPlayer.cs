@@ -7,11 +7,32 @@ namespace Hirame.Apollo
 {
     public sealed class AudioEventPlayer : GameSystem<AudioEventPlayer>
     {
-        private static readonly List<AudioEvent> audioEvents = new List<AudioEvent>();
-
+        private const int MaxActiveEvents = 64;
+        
+        private static readonly List<AudioEvent> audioEvents = new List<AudioEvent> (32);
+        private static readonly ActiveAudioEvent[] activeAudioEvents = new ActiveAudioEvent[MaxActiveEvents];
+        private static int activeEventCount;
+        
         private void LateUpdate ()
         {
             var time = Time.time;
+            
+            if (activeEventCount == MaxActiveEvents)
+                return;
+
+            for (var i = activeEventCount - 1; i >= 0; i--)
+            {
+                ref var activeEvent = ref activeAudioEvents[i];
+                
+                if (time < activeEvent.TimeToReturn)
+                    continue;
+                
+                activeEvent.ReturnToPool ();
+                activeEventCount--;
+                
+                if (activeEventCount > 0)
+                    activeAudioEvents[i] = activeAudioEvents[activeEventCount];
+            }
 
             foreach (var audioEvent in audioEvents)
             {
@@ -24,7 +45,8 @@ namespace Hirame.Apollo
         {
             for (var i = 0; i < audioEvent.QueuedItems; i++)
             {
-                audioEvent.ResolvePlayRequest (i, time);
+                var activeEvent = audioEvent.ResolvePlayRequest (i, time);
+                activeAudioEvents[activeEventCount++] = activeEvent;
             }
 
             audioEvent.lastTimePlayed = time;
@@ -40,6 +62,22 @@ namespace Hirame.Apollo
         internal static void RemoveAudioEvent (AudioEvent audioEvent)
         {
             audioEvents.Remove (audioEvent);
+        }
+        
+    }
+    
+    internal struct ActiveAudioEvent
+    {
+        public GameObjectPool<AudioSource> OriginPool;
+        public AudioSource TrackedObject;
+
+        public float TimeToReturn;
+
+        public void ReturnToPool ()
+        {
+            OriginPool.AddItem (TrackedObject);
+            OriginPool = null;
+            TrackedObject = null;
         }
     }
 

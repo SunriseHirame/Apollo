@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Hirame.Pantheon;
-using Unity.Mathematics;
+﻿using Hirame.Pantheon;
 using UnityEngine;
 
 namespace Hirame.Apollo
@@ -48,30 +46,29 @@ namespace Hirame.Apollo
             QueuedItems++;
         }
         
-
-        public void ResolvePlayRequest (int index, float time)
+        internal ActiveAudioEvent ResolvePlayRequest (int index, float time)
         {
             var playRequest = playQueue[index];
-            
-            if (!audioSourcePool.TryGetItem (out var eventSource))
-            {
-                eventSource = Instantiate (
-                    audioSourcePool.Proto, playRequest.Position,
-                    Quaternion.identity, playRequest.AttachTo);
-            }
+            var eventSource = GetAudioSource (in playRequest);
 
             ApplyEventClip (eventSource, time - lastTimePlayed);
-            eventSource.gameObject.SetActive (true);
+            
+            var sourceGo = eventSource.gameObject;
+            sourceGo.SetActive (true);
+
             eventSource.Play ();
 
-            new Ananke.DelayedAction (eventSource.clip.length, () => audioSourcePool.AddItem (eventSource));
+            return new ActiveAudioEvent
+            {
+                OriginPool = audioSourcePool,
+                TrackedObject = eventSource,
+                TimeToReturn = eventSource.clip.length + time
+            };
         }
-        
-        public void ResolvePlayRequest (int index, float time, out AudioSource eventSource)
+
+        private AudioSource GetAudioSource (in PlayRequest playRequest)
         {
-            var playRequest = playQueue[index];
-            
-            if (!audioSourcePool.TryGetItem (out eventSource))
+            if (!audioSourcePool.TryGetItem (out var eventSource))
             {
                 eventSource = Instantiate (
                     audioSourcePool.Proto, playRequest.Position,
@@ -80,8 +77,7 @@ namespace Hirame.Apollo
                 DontDestroyOnLoad (eventSource.gameObject);
             }
 
-            ApplyEventClip (eventSource, time - lastTimePlayed);
-            eventSource.Play ();
+            return eventSource;
         }
 
         public abstract void ApplyEventClip (AudioSource audioSource, float timeSinceLastEvent);
