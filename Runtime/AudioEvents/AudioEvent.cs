@@ -15,7 +15,6 @@ namespace Hirame.Apollo
         private GameObjectPool<AudioSource> audioSourcePool;
 
         internal float lastTimePlayed;
-        
         public AudioSource AudioSourceProto => audioSourceProto;
 
         
