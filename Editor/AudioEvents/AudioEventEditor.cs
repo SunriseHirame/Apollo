@@ -9,6 +9,7 @@ namespace Hirame.Apollo.Editor
     public class AudioEventEditor : UnityEditor.Editor
     {
         private static AudioSource PreviewSource;
+        
         private static string[] typeNames;
         private static Type[] types;
         
