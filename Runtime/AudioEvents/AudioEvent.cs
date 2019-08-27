@@ -6,13 +6,16 @@ namespace Hirame.Apollo
     public abstract class AudioEvent : ScriptableObject
     {
         private const int MaxEventsPerFrame = 4;
-        
-        [SerializeField] private AudioSource audioSourceProto;
+
+        [Header ("Object Pooling")]
+        [SerializeField] protected int startCapacity = 10;
+        [SerializeField] protected bool allowExpansion = true;
+        [SerializeField] protected AudioSource audioSourceProto;
         
         internal int QueuedItems;
 
         private readonly PlayRequest[] playQueue = new PlayRequest[MaxEventsPerFrame];
-        private GameObjectPool<AudioSource> audioSourcePool;
+        protected GameObjectPool<AudioSource> audioSourcePool;
 
         internal float lastTimePlayed;
         public AudioSource AudioSourceProto => audioSourceProto;
@@ -83,9 +86,9 @@ namespace Hirame.Apollo
 
         public abstract ref readonly AudioEventClip GetEventClip ();
 
-        private void OnEnable ()
+        protected virtual void OnEnable ()
         {
-            audioSourcePool = new GameObjectPool<AudioSource> (audioSourceProto, 10, true);
+            audioSourcePool = new GameObjectPool<AudioSource> (audioSourceProto, startCapacity, allowExpansion);
             
             if (Application.isPlaying)
                 audioSourcePool.FillWithItems ();
@@ -93,7 +96,7 @@ namespace Hirame.Apollo
             AudioEventPlayer.AddAudioEvent (this);
         }
 
-        private void OnDisable ()
+        protected virtual  void OnDisable ()
         {
             AudioEventPlayer.RemoveAudioEvent (this);
         }
