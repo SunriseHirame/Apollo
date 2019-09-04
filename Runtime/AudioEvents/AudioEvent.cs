@@ -88,10 +88,12 @@ namespace Hirame.Apollo
 
         protected virtual void OnEnable ()
         {
-            audioSourcePool = new GameObjectPool<AudioSource> (audioSourceProto, startCapacity, allowExpansion);
-            
+            audioSourcePool = new GameObjectPool<AudioSource> (audioSourceProto, startCapacity, false, allowExpansion);
+
             if (Application.isPlaying)
-                audioSourcePool.FillWithItems ();
+            {
+                //audioSourcePool.FillWithItems ();
+            }
             
             AudioEventPlayer.AddAudioEvent (this);
         }
