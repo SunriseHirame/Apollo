@@ -58,19 +58,25 @@ namespace Hirame.Apollo
                 Debug.Log ("AudioEvent: Failed to resolve play request!");
                 return new ActiveAudioEvent ();
             }
+            
+            var activeEvent = CreateActiveEvent (eventSource, time);
+            eventSource.Play ();
 
+            return activeEvent;
+        }
+
+        private ActiveAudioEvent CreateActiveEvent (AudioSource eventSource, float time)
+        {
             ApplyEventClip (eventSource, time - lastTimePlayed);
             
             var sourceGo = eventSource.gameObject;
             sourceGo.SetActive (true);
-
-            eventSource.Play ();
-
+            
             return new ActiveAudioEvent
             {
-                OriginPool = audioSourcePool,
-                TrackedObject = eventSource,
-                TimeToReturn = eventSource.clip.length + time
+                SourceEvent = this,
+                AudioSouce = eventSource,
+                EarliestTimeFinished = eventSource.clip.length + time
             };
         }
 
@@ -102,12 +108,17 @@ namespace Hirame.Apollo
                 //audioSourcePool.FillWithItems ();
             }
             
-            AudioEventPlayer.AddAudioEvent (this);
+            AudioEventSystem.AddAudioEvent (this);
         }
 
         protected virtual  void OnDisable ()
         {
-            AudioEventPlayer.RemoveAudioEvent (this);
+            AudioEventSystem.RemoveAudioEvent (this);
+        }
+
+        internal void ReturnToPool (AudioSource source)
+        {
+            audioSourcePool.AddItem (source);
         }
 
     }

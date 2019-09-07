@@ -1,37 +1,38 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Hirame.Pantheon;
 using Hirame.Pantheon.Core;
 using UnityEngine;
 
 namespace Hirame.Apollo
 {
-    public sealed class AudioEventPlayer : GameSystem<AudioEventPlayer>
+    public sealed class AudioEventSystem : GameSystem<AudioEventSystem>
     {
         private const int MaxActiveEvents = 64;
         
         private static readonly List<AudioEvent> audioEvents = new List<AudioEvent> (32);
         private static readonly ActiveAudioEvent[] activeAudioEvents = new ActiveAudioEvent[MaxActiveEvents];
-        private static int activeEventCount;
+        private static readonly FastStack<int> freeIndexes = new FastStack<int> (MaxActiveEvents);
+        
+        private static int lastUpdateIndex;
         
         private void LateUpdate ()
         {
             var time = Time.time;
             
-            if (activeEventCount == MaxActiveEvents)
+            if (lastUpdateIndex == MaxActiveEvents)
                 return;
 
-            for (var i = activeEventCount - 1; i >= 0; i--)
+            for (var i = 0; i < MaxActiveEvents; i++)
             {
                 ref var activeEvent = ref activeAudioEvents[i];
                 
-                if (time < activeEvent.TimeToReturn)
+                if (!activeEvent.IsAlive || !activeEvent.IsDone (time))
                     continue;
                 
+                freeIndexes.Push (i);
+                activeEvent.IsAlive = false;
                 activeEvent.ReturnToPool ();
-                activeEventCount--;
-                
-                if (activeEventCount > 0)
-                    activeAudioEvents[i] = activeAudioEvents[activeEventCount];
             }
 
             foreach (var audioEvent in audioEvents)
@@ -46,10 +47,15 @@ namespace Hirame.Apollo
             for (var i = 0; i < audioEvent.QueuedItems; i++)
             {
                 var activeEvent = audioEvent.ResolvePlayRequest (i, time);
-                if (activeEvent.TrackedObject == false)
+                if (activeEvent.AudioSouce == false)
                     continue;
-                
-                activeAudioEvents[activeEventCount++] = activeEvent;
+
+                var index = freeIndexes.Count > 0 ? freeIndexes.Pop () : lastUpdateIndex++;
+                if (index >= MaxActiveEvents)
+                    throw new IndexOutOfRangeException ("Too many active audio events");
+
+                activeEvent.IsAlive = true;
+                activeAudioEvents[index] = activeEvent;
             }
 
             audioEvent.lastTimePlayed = time;
@@ -71,16 +77,22 @@ namespace Hirame.Apollo
     
     internal struct ActiveAudioEvent
     {
-        public GameObjectPool<AudioSource> OriginPool;
-        public AudioSource TrackedObject;
+        public AudioEvent SourceEvent;
+        public AudioSource AudioSouce;
 
-        public float TimeToReturn;
+        public float EarliestTimeFinished;
+        public bool IsAlive;
+
+        public bool IsDone (float time)
+        {
+            return EarliestTimeFinished < time && !AudioSouce.isPlaying;
+        }
 
         public void ReturnToPool ()
         {
-            OriginPool.AddItem (TrackedObject);
-            OriginPool = null;
-            TrackedObject = null;
+            SourceEvent.ReturnToPool (AudioSouce);
+            SourceEvent = null;
+            AudioSouce = null;
         }
     }
 
