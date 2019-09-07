@@ -46,6 +46,9 @@ namespace Hirame.Apollo
             for (var i = 0; i < audioEvent.QueuedItems; i++)
             {
                 var activeEvent = audioEvent.ResolvePlayRequest (i, time);
+                if (activeEvent.TrackedObject == false)
+                    continue;
+                
                 activeAudioEvents[activeEventCount++] = activeEvent;
             }
 

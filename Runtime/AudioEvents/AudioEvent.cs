@@ -53,6 +53,12 @@ namespace Hirame.Apollo
             var playRequest = playQueue[index];
             var eventSource = GetAudioSource (in playRequest);
 
+            if (eventSource == false)
+            {
+                Debug.Log ("AudioEvent: Failed to resolve play request!");
+                return new ActiveAudioEvent ();
+            }
+
             ApplyEventClip (eventSource, time - lastTimePlayed);
             
             var sourceGo = eventSource.gameObject;
@@ -88,6 +94,7 @@ namespace Hirame.Apollo
 
         protected virtual void OnEnable ()
         {
+            QueuedItems = 0;
             audioSourcePool = new GameObjectPool<AudioSource> (audioSourceProto, startCapacity, false, allowExpansion);
 
             if (Application.isPlaying)
