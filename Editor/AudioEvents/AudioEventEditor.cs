@@ -29,7 +29,7 @@ namespace Hirame.Apollo.Editor
                 typeNames[i] = types[i].Name;
             }
             
-            Array.Sort (typeNames);
+            Array.Sort (typeNames, types);
         }
         
         private void OnEnable ()
@@ -84,8 +84,8 @@ namespace Hirame.Apollo.Editor
 
             typeIndex = newTypeIndex;
             
-            var multiEvent = CreateInstance (types[typeIndex]);
-            var newId = new SerializedObject (multiEvent).FindProperty ("m_Script").objectReferenceInstanceIDValue;
+            var tempInstance = CreateInstance (types[typeIndex]);
+            var newId = new SerializedObject (tempInstance).FindProperty ("m_Script").objectReferenceInstanceIDValue;
             
             serializedObject.FindProperty ("m_Script").objectReferenceInstanceIDValue = newId;
             serializedObject.ApplyModifiedProperties ();
