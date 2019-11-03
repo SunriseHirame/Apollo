@@ -75,7 +75,7 @@ namespace Hirame.Apollo
             return new ActiveAudioEvent
             {
                 SourceEvent = this,
-                AudioSouce = eventSource,
+                AudioSource = eventSource,
                 EarliestTimeFinished = eventSource.clip.length + time
             };
         }
@@ -108,12 +108,12 @@ namespace Hirame.Apollo
                 //audioSourcePool.FillWithItems ();
             }
             
-            AudioEventSystem.AddAudioEvent (this);
+            AudioEventPlayer.AddAudioEvent (this);
         }
 
         protected virtual  void OnDisable ()
         {
-            AudioEventSystem.RemoveAudioEvent (this);
+            AudioEventPlayer.RemoveAudioEvent (this);
         }
 
         internal void ReturnToPool (AudioSource source)

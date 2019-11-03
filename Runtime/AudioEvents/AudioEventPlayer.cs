@@ -6,17 +6,18 @@ using UnityEngine;
 
 namespace Hirame.Apollo
 {
-    public sealed class AudioEventSystem : GameSystem<AudioEventSystem>
+    [AutoInitialized]
+    public sealed class AudioEventPlayer : GameSystem<AudioEventPlayer>, IWrapUpUpdate
     {
         private const int MaxActiveEvents = 64;
         
-        private static readonly List<AudioEvent> audioEvents = new List<AudioEvent> (32);
-        private static readonly ActiveAudioEvent[] activeAudioEvents = new ActiveAudioEvent[MaxActiveEvents];
-        private static readonly FastStack<int> freeIndexes = new FastStack<int> (MaxActiveEvents);
+        private readonly List<AudioEvent> audioEvents = new List<AudioEvent> (32);
+        private readonly ActiveAudioEvent[] activeAudioEvents = new ActiveAudioEvent[MaxActiveEvents];
+        private readonly FastStack<int> freeIndexes = new FastStack<int> (MaxActiveEvents);
         
-        private static int lastUpdateIndex;
+        private int lastUpdateIndex;
         
-        private void LateUpdate ()
+        void IWrapUpUpdate.OnWarpUpUpdate ()
         {
             var time = Time.time;
             
@@ -38,16 +39,16 @@ namespace Hirame.Apollo
             foreach (var audioEvent in audioEvents)
             {
                 if (audioEvent.QueuedItems > 0)
-                    PlayerQueuedEvents (audioEvent, time);
+                    PlayQueuedEvents (audioEvent, time);
             }
         }
 
-        private static void PlayerQueuedEvents (AudioEvent audioEvent, float time)
+        private void PlayQueuedEvents (AudioEvent audioEvent, float time)
         {
             for (var i = 0; i < audioEvent.QueuedItems; i++)
             {
                 var activeEvent = audioEvent.ResolvePlayRequest (i, time);
-                if (activeEvent.AudioSouce == false)
+                if (activeEvent.AudioSource == false)
                     continue;
 
                 var index = freeIndexes.Count > 0 ? freeIndexes.Pop () : lastUpdateIndex++;
@@ -65,34 +66,33 @@ namespace Hirame.Apollo
         internal static void AddAudioEvent (AudioEvent audioEvent)
         {
             audioEvent.lastTimePlayed = Time.time;
-            audioEvents.Add (audioEvent);   
+            GetOrCreate ().audioEvents.Add (audioEvent);   
         }
 
         internal static void RemoveAudioEvent (AudioEvent audioEvent)
         {
-            audioEvents.Remove (audioEvent);
+            GetOrCreate ().audioEvents.Remove (audioEvent);
         }
-        
     }
     
     internal struct ActiveAudioEvent
     {
         public AudioEvent SourceEvent;
-        public AudioSource AudioSouce;
+        public AudioSource AudioSource;
 
         public float EarliestTimeFinished;
         public bool IsAlive;
 
         public bool IsDone (float time)
         {
-            return EarliestTimeFinished < time && !AudioSouce.isPlaying;
+            return EarliestTimeFinished < time && !AudioSource.isPlaying;
         }
 
         public void ReturnToPool ()
         {
-            SourceEvent.ReturnToPool (AudioSouce);
+            SourceEvent.ReturnToPool (AudioSource);
             SourceEvent = null;
-            AudioSouce = null;
+            AudioSource = null;
         }
     }
 
