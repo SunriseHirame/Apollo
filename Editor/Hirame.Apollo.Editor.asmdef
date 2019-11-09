@@ -2,9 +2,9 @@
     "name": "Hirame.Apollo.Editor",
     "references": [
         "GUID:fe35fc9f749443e45856a6c76aef098a",
-        "GUID:83b2b053c31a10140a0bf3ba6ffd6622"
+        "GUID:83b2b053c31a10140a0bf3ba6ffd6622",
+        "GUID:a3b54d5dfc6e3014eb97b43eda8b47f9"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
@@ -14,5 +14,6 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": []
+    "versionDefines": [],
+    "noEngineReferences": false
 }
