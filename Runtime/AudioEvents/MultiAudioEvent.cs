@@ -5,7 +5,7 @@ using Random = UnityEngine.Random;
 namespace Hirame.Apollo
 {
     
-    [CreateAssetMenu (menuName = "Hirame/Apollo/Multi Audio Event")]
+    [CreateAssetMenu (menuName = "Hirame/Audio/Multi Audio Event")]
     public class MultiAudioEvent : AudioEvent
     {
         public AudioEventClip[] EventClips;
