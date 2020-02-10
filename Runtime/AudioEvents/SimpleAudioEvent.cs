@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
 using Hirame.Pantheon;
+using UnityEngine;
 using Unity.Mathematics;
 
 namespace Hirame.Apollo
@@ -8,7 +9,9 @@ namespace Hirame.Apollo
     public sealed class SimpleAudioEvent : AudioEvent
     {
         public AudioEventClip EventClip = AudioEventClip.Default;
-
+        
+        [SerializeField] private InLineAudioEventArray EventClips;
+        
         public override void ApplyEventClip (AudioSource audioSource, float timeSinceLastEvent)
         {
             var attack = math.clamp (timeSinceLastEvent, 1f / QueuedItems, 1f);
@@ -22,7 +25,18 @@ namespace Hirame.Apollo
         {
             return ref EventClip;
         }
-
     }
+    
+    [Serializable]
+    public struct InLineAudioEventArray
+    {
+        [SerializeField] private bool multiple;
+        [SerializeField] private AudioEventClip singleData;
+        [SerializeField] private AudioEventClip[] array;
 
+        public AudioEventClip GeRandom ()
+        {
+            return multiple ? array.GetRandom () : singleData;
+        }
+    }
 }

@@ -8,8 +8,8 @@ namespace Hirame.Apollo
     public struct AudioEventClip
     {
         [SerializeField] private AudioClip clip;
-        [FormerlySerializedAs ("volumeMinMax")] [SerializeField, MinMax (0, 1)] private FloatMinMax volume;
-        [FormerlySerializedAs ("pitchMinMax")] [SerializeField, MinMax (-3, 4)] private FloatMinMax pitch;
+        [SerializeField, MinMax (0, 1)] private FloatMinMax volume;
+        [SerializeField, MinMax (-3, 4)] private FloatMinMax pitch;
 
         public AudioClip Clip => clip;
         public FloatMinMax Volume => volume;

@@ -56,9 +56,6 @@ namespace Hirame.Apollo.Editor
 
             DrawPreview ();
 
-            if (ChangeType ())
-                return;
-            
             DrawPropertiesExcluding (serializedObject, "m_Script");
             
             if (serializedObject.hasModifiedProperties)
